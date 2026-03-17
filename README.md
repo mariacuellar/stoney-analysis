@@ -10,7 +10,20 @@ Repository for organizing documents, data extracts, notes, and analysis files re
 
 ## Current Contents
 
-- `docs/statistical-analysis.qmd`: two-part analysis of NIFM occurrence and mark informativeness
+- `analysis/statistical-analysis.qmd`: Quarto source for the two-part analysis of NIFM occurrence and mark informativeness
+- `docs/index.html`: rendered page for GitHub Pages publishing
+
+## Publish Online
+
+To make the analysis visible on the internet with GitHub Pages:
+
+1. Commit and push the repository to GitHub.
+2. In the GitHub repository, open `Settings` > `Pages`.
+3. Under `Build and deployment`, choose `Deploy from a branch`.
+4. Select the `main` branch and the `/docs` folder.
+5. Save the settings and wait for GitHub to publish the site.
+
+After publication, the page will be served from the repository's GitHub Pages URL, using `docs/index.html` as the homepage.
 
 ## Next Steps
 
