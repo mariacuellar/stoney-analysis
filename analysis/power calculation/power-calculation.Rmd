@@ -1,0 +1,360 @@
+---
+title: "Power Calculation for Non-Identifiable Fingermarks Experiment"
+author: "Maria Cuellar"
+date: "2024-05-03"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) 
+
+```
+
+\renewcommand{\thetable}{\thesection\arabic{table}} 
+\renewcommand{\theHtable}{\thesection\arabic{table}} 
+\setcounter{table}{0}
+
+
+```{r preamble, include=FALSE}
+# packages
+library(tidyverse)
+library(reshape2)
+library(gt)
+library(gtExtras)
+
+```
+
+# Question of interest
+
+I was asked to check whether there are currently sufficient runs for each group, and if not, how many more are needed for a high-quality statistical analysis. I approach this by doing an analysis of variance (ANOVA) test and an ANOVA power calculation.
+
+
+
+# Data
+
+This is the data from the experiment so far, on 3-4-24. 
+
+```{r load-data, include=FALSE}
+
+# read data
+dat.0 <- read_csv("data/nifm-3-4-24.csv")
+
+```
+
+
+```{r orig-data, echo=FALSE}
+
+dat.0 %>%
+  gt() %>% 
+  gt_theme_nytimes() %>%
+  tab_header(title = "Table 1. Original data")
+
+```
+
+There are seven groups defined by the firearm type (Automatic or Rifle) and the caliber (22, 32, 38, or 45). The groups are A22, A32, A38, A45, R22, R32, and R45. 
+
+We need to rewrite the data so the rows are the individual runs, and the outcome variable of interest is the number of minutiae found in that run. Here is an example of the rewritten data.
+
+```{r data-rewritten, echo=FALSE}
+dat <- dat.0 %>% rename_with(~paste0(.,"_minutiae"), .cols = matches("^\\d")) %>% 
+               select (-c(Type, Caliber, `Rounds Tested`, Donors))
+
+# changing shape of data so it's in long format
+datax = array( c(
+               as.numeric(dat[1,]), 
+               as.numeric(dat[2,]),
+               as.numeric(dat[3,]),
+               as.numeric(dat[4,]),
+               as.numeric(dat[5,]),
+               as.numeric(dat[6,]),
+               as.numeric(dat[7,])
+               ),
+               dim=c(11,7))
+dimnames(datax) = list(minutiae= c(3:13), group = c('A22', 'A32', 'A38', 'A45', 'R22', 'R38', 'R45'))
+
+long <- as.data.frame.table(datax)
+dat.long <- long[rep(1:nrow(long), long$Freq), -3]
+dat.long <- dat.long %>% relocate(group)
+rownames(dat.long) <- NULL
+dat.long$minutiae <- as.numeric(as.character(dat.long$minutiae))
+dat.long$group <- as.factor(dat.long$group)
+dat.long$run <- 1:nrow(dat.long)
+dat.long <- dat.long %>% relocate(run)
+dat.long.tab <- dat.long %>% rename(Run=run, Group=group, Minutiae=minutiae)
+
+dat.long.tab[1:10,] %>% 
+  gt() %>% 
+  gt_theme_nytimes() %>%
+  tab_header(title = "Table 2. Sample of rewritten data, first 10 rows")
+
+```
+
+
+The table below shows the summary statistics by group. Note that there are many more observations of A38 than the rest, and the three groups with the smallest sample sizes are A22, R22, and R45. 
+
+
+```{r data-EDA, echo=FALSE}
+
+# find means by group
+groupsum <- dat.long %>%
+                    group_by(group) %>%
+                    summarize(mean = mean(minutiae), var = var(minutiae), num = n()) %>%
+                    mutate_if(is.numeric, round, digits=2)
+
+groupsum.tab <- groupsum %>% rename(Group=group, Mean=mean, Variance=var, n=num) %>% 
+                             relocate(n, .after=Group)
+
+groupsum.tab %>%
+  gt() %>% 
+  gt_theme_nytimes() %>%
+  tab_header(title = "Table 3. Group summary \n (Mean and variance are of number of minutiae)")
+
+```
+
+If we sort the groups, from highest to lowest, by the means, we get: `r groupsum %>% arrange(desc(mean)) %>% select(group) %>% pull()`. But we do not know if the differences between the groups are statistically significant.
+
+
+```{r eda-plots, out.width="70%", fig.align="center", echo=FALSE, fig.cap = "Comparing minutiae by group."}
+
+dat.long %>% ggplot(aes(x=group, y=minutiae)) + 
+  geom_boxplot() + 
+  ylim(0,13) + 
+  xlab("Group") + ylab("Minutiae") + ggtitle("Minutiae distribution by group")
+
+
+```
+
+
+```{r eda-plots2, out.width="70%", fig.align="center", echo=FALSE, fig.cap = "Comparing minutiae by group.", include=FALSE, echo=FALSE}
+
+
+dat.long %>% ggplot(aes(x=minutiae)) + 
+  geom_histogram() + 
+  ylim(0,13) + coord_flip() + facet_wrap(~group) + 
+  xlab("Group") + ylab("Minutiae") + ggtitle("Minutiae distribution by group")
+
+
+```
+
+
+Note that the bottom range is cut out because only the minutiae of 3 and higher were included. The lower ones were not of interest.
+
+
+# Current power
+
+To determine a sufficient sample size for each group, I used an ANOVA power calculation. 
+
+
+```{r anova-sample-sizes, out.width="70%", fig.align="center", echo=FALSE, fig.cap = "Power analysis to determine sample size by group."}
+
+# find how power changes with different sample sizes
+
+n <- c(seq(2,10,by=1),seq(12,20,by=2),seq(25,50,by=5))
+p <- power.anova.test(groups = dim(datax)[2],
+                      between.var = var(groupsum$mean), 
+                      within.var = mean(groupsum$var, na.rm=TRUE),
+                      power=NULL, 
+                      sig.level=0.05, 
+                      n=n)
+# ignore warning here
+
+df <- data.frame(p$power, n)
+
+df %>% ggplot(aes(y=p.power, x=n)) + 
+  geom_point() + 
+  geom_line() + 
+  theme_minimal() + 
+  xlab("Sample size per group \n(assumes equal size in all groups)") + 
+  ylab("Power") +
+  ggtitle("Power by sample size per group") + 
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  geom_vline(xintercept = 20, lty="dashed") +
+  geom_vline(xintercept = 25, lty="dashed") +
+  geom_hline(yintercept = 0.8, lty="dashed") +
+  geom_hline(yintercept = 0.9, lty="dashed")
+
+```
+
+A commonly used rule of thumb for a sufficient power of a study is between 0.8 and 0.9. If we go with the lower power, we need 20 samples per group, and if we go with the higher power we need 25. For an ANOVA test, the same sample sizes for each factor level, i.e., group, should be equal. Therefore, the groups R45, R22, and A22 do not have sufficient observations. They each need at least 20.
+
+
+
+# Data analysis 
+## (NOTE: THIS WILL BE UPDATED WHEN THERE IS MORE DATA)
+
+Once we have sufficient data, we can do an ANOVA test to see which of the groups (firearm type and caliber) has the best acquisition of minutiae. We should not perform an ANOVA test yet, because there is not enough data, so the results are meaningless. Nevertheless, as a proof of concept, the results of an ANOVA test with the current data are the following.
+
+
+```{r anova-test}
+
+# ANOVA test
+out <- aov(minutiae ~ group, data = dat.long)
+summary(out)
+
+```
+
+## Check model assumptions
+
+The ANOVA test assumes that the data are normally distributed and the variance across groups are homogeneous. We can check that with some diagnostic plots.
+
+As the ANOVA test is significant (check this when we have enough data!!), we can compute Tukey HSD (Tukey Honest Significant Differences, R function: TukeyHSD()) for performing multiple pairwise-comparison between the means of groups.
+
+
+
+```{r tukey-test, out.width="70%", fig.align="center", fig.cap = "Tukey test to determine if there are significant differences between groups, pairwise."}
+
+plot(TukeyHSD(out))
+
+```
+
+
+### Check the homogeneity of variance assumption.
+
+```{r aov-diatnostics, out.width="70%", fig.align="center", fig.cap = "Diagnostic plots for ANOVA test."}
+
+plot(out, 1)
+
+```
+
+We see that there are several outliers (points 155, 55, and 54), and that the residuals are not symmetrical about zero. 
+
+Thus, we recommend Levene’s test, which is less sensitive to departures from normal distribution. The function leveneTest() [in car package] will be used.
+
+```{r}
+library(car)
+leveneTest(minutiae ~ group, data = dat.long)
+
+```
+
+### Relaxing the homogeneity of variance assumption
+
+Since the variances by group are different, we perform a Welch one-way test. 
+
+```{r}
+# out.welch <- oneway.test(minutiae ~ group, data = dat.long) # not enough data
+
+```
+
+### Check the normality assumption
+
+```{r, fig.cap = "Normality assumption for ANOVA test."}
+
+plot(out, 2)
+
+```
+
+
+### New test if assumptions are not met
+
+If assumptions are not met, we can use the Kruskal-Wallis rank sum test.
+
+```{r}
+
+kruskal.test(minutiae ~ group, data = dat.long)
+
+```
+
+
+We do not have enough evidence to suggest that the groups are statistically significantly different from each other.
+
+
+
+## Analyzing Automatic vs. Rifle results
+
+Is the outcome different by firearm type? It's not clear from the boxplot.
+
+```{r type-eda, out.width="70%", fig.align="center", fig.cap = "Comparing outcome by firearm type."}
+
+dat.long$type <- substr(dat.long$group, 1, 1)
+
+dat.long %>% ggplot(aes(x=type, y=minutiae)) + 
+  geom_boxplot() + 
+  ylim(0,13) +
+  xlab("Firearm type") + 
+  ylab("Minutiae") + 
+  ggtitle("Minutiae by firearm type")
+
+```
+
+We can run a t-test to check whether the Automatic vs. Rifle results are significantly different from each other.
+
+```{r ttest, out.width="70%", fig.align="center"}
+
+out.t <- lm(minutiae ~ as.factor(type), data = dat.long)
+
+```
+
+Diagnostic plots for the t test (https://www.datanovia.com/en/lessons/t-test-in-r/).
+
+```{r ttest-diag, out.width="100%", fig.align="center", fig.cap = "Diagnostic plots for t-test."}
+
+resids <- resid(out.t)
+par(mfrow = c(2,2))
+hist(resids)
+plot(out.t, which = 2)
+plot(out.t, which = 1)
+plot(out.t, which = 5)
+
+
+```
+
+We can use a hierarchical model for this to study joint effects of firearm type and caliber.
+
+
+
+
+
+# Answers for David
+
+
+## Do we need to collect more samples of the current calibers?
+
+Yes. We need at least 20 samples for each group, so we need more for A22, R22, and R45. For the ANOVA test, ideally we would have all the groups have the same sample size, but this is not necessary. 
+
+More specifically, if you have equal variances in the groups and unequal sample sizes, tnis is not a problem. If you have unequal variances and equal sample sizes, no problem. But if you have unequal variances and unequal sample sizes, this is a problem. We might have to run an alternative test. But this is all ok. The most important thing is getting at least 20 samples per group.
+
+
+
+
+
+## Should we collect R32 data? 
+
+There is no need. We can do the analysis be leaving a zero in the cell for R32.
+
+In the analysis,one should ignore the structural zeroes in any test of independence or association. The way to do this is to estimate the appropriate model on the full contingency table (including the structural zeros) and then subtract the sum of the chi-square values associated with the zero cells from the total chi-square test. This generates a reduced chi-square test of independence only for the reduced contingency table.
+
+
+
+
+## Questions for David (2024-05-03)
+
+1. I assume that the number of minutiae are per Non-Identifiable Fingermarks (NIFM) that was found. 
+
+2. Is there a column for how many NIFMs were found? 
+
+3. Is it better to find more prints with fewer minutiae each, or fewer prints with more minutiae each? Or do we only care about the total number of minutiae, regardless of the number of prints? 
+
+4. What is the outcome of interest?
+
+
+
+
+## Answers (2024-05-07)
+
+1. Yes.
+
+2. Yes, in group summary.
+
+3. Fewer prints with more minutiae each is better. No, we care about the number of prints. There is an interesting analysis that we should do: we should give more weight to very informative NIFMs vs. uninformative NIFMs.
+
+4. Outcome of interest: How often (among the number of tested rounds) do we get a round with a NIFM above a given threshold?
+
+
+
+
+
+
+

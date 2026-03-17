@@ -1,0 +1,512 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{anyfontsize}
+\usepackage{multirow}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Power Calculation for Non-Identifiable Fingermarks Experiment},
+  pdfauthor={Maria Cuellar},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Power Calculation for Non-Identifiable Fingermarks Experiment}
+\author{Maria Cuellar}
+\date{2025-05-23}
+
+\begin{document}
+\maketitle
+
+\renewcommand{\thetable}{\thesection\arabic{table}} 
+\renewcommand{\theHtable}{\thesection\arabic{table}} 
+\setcounter{table}{0}
+
+\section{Question of interest}\label{question-of-interest}
+
+I was asked to check whether there are currently sufficient runs for
+each group, and if not, how many more are needed for a high-quality
+statistical analysis. I approach this by doing an analysis of variance
+(ANOVA) test and an ANOVA power calculation.
+
+\section{Data}\label{data}
+
+This is the data from the experiment so far, on 3-4-24.
+
+\begin{table}[t]
+\caption*{
+{\large Table 1. Original data}
+} 
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrrrrrrrrrrrrrrrrrr}
+\toprule
+{\TEXTCOLOR[HTML]{A9A9A9}{TYPE}} & {\TEXTCOLOR[HTML]{A9A9A9}{CALIBER}} & {\TEXTCOLOR[HTML]{A9A9A9}{ROUNDS TESTED}} & {\TEXTCOLOR[HTML]{A9A9A9}{DONORS}} & {\TEXTCOLOR[HTML]{A9A9A9}{4}} & {\TEXTCOLOR[HTML]{A9A9A9}{5}} & {\TEXTCOLOR[HTML]{A9A9A9}{6}} & {\TEXTCOLOR[HTML]{A9A9A9}{7}} & {\TEXTCOLOR[HTML]{A9A9A9}{8}} & {\TEXTCOLOR[HTML]{A9A9A9}{9}} & {\TEXTCOLOR[HTML]{A9A9A9}{10}} & {\TEXTCOLOR[HTML]{A9A9A9}{11}} & {\TEXTCOLOR[HTML]{A9A9A9}{12}} & {\TEXTCOLOR[HTML]{A9A9A9}{13}} & {\TEXTCOLOR[HTML]{A9A9A9}{14}} & {\TEXTCOLOR[HTML]{A9A9A9}{15}} & {\TEXTCOLOR[HTML]{A9A9A9}{16}} & {\TEXTCOLOR[HTML]{A9A9A9}{17}} & {\TEXTCOLOR[HTML]{A9A9A9}{18}} \\ 
+\midrule\addlinespace[2.5pt]
+{A} & {22} & {198} & {15} & {19} & {11} & {13} & {4} & {1} & {1} & {0} & {1} & {0} & {0} & {0} & {0} & {0} & {0} & {0} \\ 
+{A} & {32} & {105} & {12} & {26} & {9} & {12} & {5} & {1} & {3} & {1} & {1} & {0} & {2} & {0} & {0} & {0} & {0} & {0} \\ 
+{A} & {38} & {348} & {20} & {38} & {28} & {12} & {11} & {7} & {3} & {0} & {1} & {0} & {0} & {1} & {0} & {0} & {0} & {0} \\ 
+{A} & {45} & {178} & {16} & {21} & {16} & {4} & {4} & {3} & {2} & {0} & {0} & {0} & {0} & {0} & {0} & {0} & {0} & {0} \\ 
+{R} & {22} & {225} & {23} & {26} & {9} & {9} & {2} & {3} & {1} & {0} & {1} & {0} & {0} & {1} & {0} & {0} & {0} & {0} \\ 
+{R} & {38} & {107} & {20} & {30} & {22} & {5} & {6} & {5} & {2} & {5} & {2} & {1} & {0} & {0} & {0} & {0} & {0} & {1} \\ 
+{R} & {45} & {102} & {12} & {40} & {17} & {8} & {2} & {9} & {3} & {1} & {1} & {1} & {2} & {0} & {1} & {0} & {0} & {1} \\ 
+\bottomrule
+\end{tabular*}
+\end{table}
+
+There are seven groups defined by the firearm type (Automatic or Rifle)
+and the caliber (22, 32, 38, or 45). The groups are A22, A32, A38, A45,
+R22, R32, and R45.
+
+We need to rewrite the data so the rows are the individual runs, and the
+outcome variable of interest is the number of minutiae found in that
+run. Here is an example of the rewritten data.
+
+\begin{table}[t]
+\caption*{
+{\large Table 2. Sample of rewritten data, first 10 rows}
+} 
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}rcr}
+\toprule
+{\TEXTCOLOR[HTML]{A9A9A9}{RUN}} & {\TEXTCOLOR[HTML]{A9A9A9}{GROUP}} & {\TEXTCOLOR[HTML]{A9A9A9}{MINUTIAE}} \\ 
+\midrule\addlinespace[2.5pt]
+{1} & {A22} & {3} \\ 
+{2} & {A22} & {3} \\ 
+{3} & {A22} & {3} \\ 
+{4} & {A22} & {3} \\ 
+{5} & {A22} & {3} \\ 
+{6} & {A22} & {3} \\ 
+{7} & {A22} & {3} \\ 
+{8} & {A22} & {3} \\ 
+{9} & {A22} & {3} \\ 
+{10} & {A22} & {3} \\ 
+\bottomrule
+\end{tabular*}
+\end{table}
+
+The table below shows the summary statistics by group. Note that there
+are many more observations of A38 than the rest, and the three groups
+with the smallest sample sizes are A22, R22, and R45.
+
+\begin{table}[t]
+\caption*{
+{\large Table 3. Group summary 
+ (Mean and variance are of number of minutiae)}
+} 
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}crrr}
+\toprule
+{\TEXTCOLOR[HTML]{A9A9A9}{GROUP}} & {\TEXTCOLOR[HTML]{A9A9A9}{N}} & {\TEXTCOLOR[HTML]{A9A9A9}{MEAN}} & {\TEXTCOLOR[HTML]{A9A9A9}{VARIANCE}} \\ 
+\midrule\addlinespace[2.5pt]
+{A22} & {50} & {4.30} & {2.13} \\ 
+{A32} & {57} & {8.28} & {2.42} \\ 
+{A38} & {81} & {11.40} & {2.49} \\ 
+{A45} & {23} & {4.04} & {2.68} \\ 
+{R22} & {50} & {5.16} & {2.01} \\ 
+{R38} & {50} & {9.00} & {1.76} \\ 
+{R45} & {54} & {12.17} & {2.07} \\ 
+\bottomrule
+\end{tabular*}
+\end{table}
+
+If we sort the groups, from highest to lowest, by the means, we get:
+R45, A38, R38, A32, R22, A22, A45. But we do not know if the differences
+between the groups are statistically significant.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.7\linewidth]{power-calculation-2025-05-23_files/figure-latex/eda-plots-1} 
+
+}
+
+\caption{Comparing minutiae by group.}\label{fig:eda-plots}
+\end{figure}
+
+Note that the bottom range is cut out because only the minutiae of 3 and
+higher were included. The lower ones were not of interest.
+
+\section{Current power}\label{current-power}
+
+To determine a sufficient sample size for each group, I used an ANOVA
+power calculation.
+
+A commonly used rule of thumb for a sufficient power of a study is
+between 0.8 and 0.9. If we go with the lower power, we need 20 samples
+per group, and if we go with the higher power we need 25. For an ANOVA
+test, the same sample sizes for each factor level, i.e., group, should
+be equal. Therefore, the groups R45, R22, and A22 do not have sufficient
+observations. They each need at least 20.
+
+\section{Data analysis}\label{data-analysis}
+
+\subsection{(NOTE: THIS WILL BE UPDATED WHEN THERE IS MORE
+DATA)}\label{note-this-will-be-updated-when-there-is-more-data}
+
+Once we have sufficient data, we can do an ANOVA test to see which of
+the groups (firearm type and caliber) has the best acquisition of
+minutiae. We should not perform an ANOVA test yet, because there is not
+enough data, so the results are meaningless. Nevertheless, as a proof of
+concept, the results of an ANOVA test with the current data are the
+following.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ANOVA test}
+\NormalTok{out }\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(minutiae }\SpecialCharTok{\textasciitilde{}}\NormalTok{ group, }\AttributeTok{data =}\NormalTok{ dat.long)}
+\FunctionTok{summary}\NormalTok{(out)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              Df Sum Sq Mean Sq F value Pr(>F)    
+## group         6   3313   552.2   249.5 <2e-16 ***
+## Residuals   358    793     2.2                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\subsection{Check model assumptions}\label{check-model-assumptions}
+
+The ANOVA test assumes that the data are normally distributed and the
+variance across groups are homogeneous. We can check that with some
+diagnostic plots.
+
+As the ANOVA test is significant (check this when we have enough
+data!!), we can compute Tukey HSD (Tukey Honest Significant Differences,
+R function: TukeyHSD()) for performing multiple pairwise-comparison
+between the means of groups.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{TukeyHSD}\NormalTok{(out))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.7\linewidth]{power-calculation-2025-05-23_files/figure-latex/tukey-test-1} 
+
+}
+
+\caption{Tukey test to determine if there are significant differences between groups, pairwise.}\label{fig:tukey-test}
+\end{figure}
+
+\subsubsection{Check the homogeneity of variance
+assumption.}\label{check-the-homogeneity-of-variance-assumption.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(out, }\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.7\linewidth]{power-calculation-2025-05-23_files/figure-latex/aov-diatnostics-1} 
+
+}
+
+\caption{Diagnostic plots for ANOVA test.}\label{fig:aov-diatnostics}
+\end{figure}
+
+We see that there are several outliers (points 155, 55, and 54), and
+that the residuals are not symmetrical about zero.
+
+Thus, we recommend Levene's test, which is less sensitive to departures
+from normal distribution. The function leveneTest() {[}in car package{]}
+will be used.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(car)}
+\FunctionTok{leveneTest}\NormalTok{(minutiae }\SpecialCharTok{\textasciitilde{}}\NormalTok{ group, }\AttributeTok{data =}\NormalTok{ dat.long)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Levene's Test for Homogeneity of Variance (center = median)
+##        Df F value Pr(>F)
+## group   6  1.0844 0.3712
+##       358
+\end{verbatim}
+
+\subsubsection{Relaxing the homogeneity of variance
+assumption}\label{relaxing-the-homogeneity-of-variance-assumption}
+
+Since the variances by group are different, we perform a Welch one-way
+test.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# out.welch \textless{}{-} oneway.test(minutiae \textasciitilde{} group, data = dat.long) \# not enough data}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Check the normality
+assumption}\label{check-the-normality-assumption}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(out, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{power-calculation-2025-05-23_files/figure-latex/unnamed-chunk-3-1.pdf}}
+\caption{Normality assumption for ANOVA test.}
+\end{figure}
+
+\subsubsection{New test if assumptions are not
+met}\label{new-test-if-assumptions-are-not-met}
+
+If assumptions are not met, we can use the Kruskal-Wallis rank sum test.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kruskal.test}\NormalTok{(minutiae }\SpecialCharTok{\textasciitilde{}}\NormalTok{ group, }\AttributeTok{data =}\NormalTok{ dat.long)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  minutiae by group
+## Kruskal-Wallis chi-squared = 287.25, df = 6, p-value < 2.2e-16
+\end{verbatim}
+
+We do not have enough evidence to suggest that the groups are
+statistically significantly different from each other.
+
+\subsection{Analyzing Automatic vs.~Rifle
+results}\label{analyzing-automatic-vs.-rifle-results}
+
+Is the outcome different by firearm type? It's not clear from the
+boxplot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.long}\SpecialCharTok{$}\NormalTok{type }\OtherTok{\textless{}{-}} \FunctionTok{substr}\NormalTok{(dat.long}\SpecialCharTok{$}\NormalTok{group, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+
+\NormalTok{dat.long }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{type, }\AttributeTok{y=}\NormalTok{minutiae)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{13}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Firearm type"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Minutiae"}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Minutiae by firearm type"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.7\linewidth]{power-calculation-2025-05-23_files/figure-latex/type-eda-1} 
+
+}
+
+\caption{Comparing outcome by firearm type.}\label{fig:type-eda}
+\end{figure}
+
+We can run a t-test to check whether the Automatic vs.~Rifle results are
+significantly different from each other.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{out.t }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(minutiae }\SpecialCharTok{\textasciitilde{}} \FunctionTok{as.factor}\NormalTok{(type), }\AttributeTok{data =}\NormalTok{ dat.long)}
+\end{Highlighting}
+\end{Shaded}
+
+Diagnostic plots for the t test
+(\url{https://www.datanovia.com/en/lessons/t-test-in-r/}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{resids }\OtherTok{\textless{}{-}} \FunctionTok{resid}\NormalTok{(out.t)}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\FunctionTok{hist}\NormalTok{(resids)}
+\FunctionTok{plot}\NormalTok{(out.t, }\AttributeTok{which =} \DecValTok{2}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(out.t, }\AttributeTok{which =} \DecValTok{1}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(out.t, }\AttributeTok{which =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{power-calculation-2025-05-23_files/figure-latex/ttest-diag-1} 
+
+}
+
+\caption{Diagnostic plots for t-test.}\label{fig:ttest-diag}
+\end{figure}
+
+We can use a hierarchical model for this to study joint effects of
+firearm type and caliber.
+
+\section{Answers for David}\label{answers-for-david}
+
+\subsection{Do we need to collect more samples of the current
+calibers?}\label{do-we-need-to-collect-more-samples-of-the-current-calibers}
+
+Yes. We need at least 20 samples for each group, so we need more for
+A22, R22, and R45. For the ANOVA test, ideally we would have all the
+groups have the same sample size, but this is not necessary.
+
+More specifically, if you have equal variances in the groups and unequal
+sample sizes, tnis is not a problem. If you have unequal variances and
+equal sample sizes, no problem. But if you have unequal variances and
+unequal sample sizes, this is a problem. We might have to run an
+alternative test. But this is all ok. The most important thing is
+getting at least 20 samples per group.
+
+\subsection{Should we collect R32
+data?}\label{should-we-collect-r32-data}
+
+There is no need. We can do the analysis be leaving a zero in the cell
+for R32.
+
+In the analysis,one should ignore the structural zeroes in any test of
+independence or association. The way to do this is to estimate the
+appropriate model on the full contingency table (including the
+structural zeros) and then subtract the sum of the chi-square values
+associated with the zero cells from the total chi-square test. This
+generates a reduced chi-square test of independence only for the reduced
+contingency table.
+
+\subsection{Questions for David
+(2024-05-03)}\label{questions-for-david-2024-05-03}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  I assume that the number of minutiae are per Non-Identifiable
+  Fingermarks (NIFM) that was found.
+\item
+  Is there a column for how many NIFMs were found?
+\item
+  Is it better to find more prints with fewer minutiae each, or fewer
+  prints with more minutiae each? Or do we only care about the total
+  number of minutiae, regardless of the number of prints?
+\item
+  What is the outcome of interest?
+\end{enumerate}
+
+\subsection{Answers (2024-05-07)}\label{answers-2024-05-07}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Yes.
+\item
+  Yes, in group summary.
+\item
+  Fewer prints with more minutiae each is better. No, we care about the
+  number of prints. There is an interesting analysis that we should do:
+  we should give more weight to very informative NIFMs vs.~uninformative
+  NIFMs.
+\item
+  Outcome of interest: How often (among the number of tested rounds) do
+  we get a round with a NIFM above a given threshold?
+\end{enumerate}
+
+\end{document}

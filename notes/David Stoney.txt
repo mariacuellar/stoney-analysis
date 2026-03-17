@@ -1,0 +1,22 @@
+
+Are there any fingermarks that have fewer than 3 minutia?
+Sample size depends on the analysis you want to do for each type
+
+
+
+
+81 different guns - fully loaded have 5 rounds, some have 6, 8, 16
+
+
+
+
+Found some fingermarks
+1. do any have enough detail.
+2. search in a database.
+3. once you have a comparison, and have a suspect. algorithm to assess strength of association, 
+
+
+how many guns, how many bullets per caliber, how many donors of fingerprints
+
+
+Set up next meeting
